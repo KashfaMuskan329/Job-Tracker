@@ -48,7 +48,7 @@ const port = process.env.PORT || 5000;
 
 if (require.main === module) {
   mongoose
-    .connect(process.env.MONGO_URI || "mongodb://localhost:27017/jobtracker")
+    .connect(process.env.MONGO_URI || "mongodb://localhost:27017/jobtracker", { family: 4, serverSelectionTimeoutMS: 10000 })
     .then(() => {
       console.log("MongoDB connected");
       app.listen(port, () => console.log(`API running on port ${port}`));

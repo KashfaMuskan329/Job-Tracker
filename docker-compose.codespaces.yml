@@ -1,0 +1,32 @@
+services:
+  mongo:
+    image: mongo:7
+    network_mode: host
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ping:1})"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    env_file: .env
+    network_mode: host
+    extra_hosts:
+      - "mongo:127.0.0.1"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    network_mode: host
+    extra_hosts:
+      - "backend:127.0.0.1"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
